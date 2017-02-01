@@ -2,6 +2,8 @@
 
 Handles syncing files served up by the server to Roblox Studio.
 
+For documentation on installing the CLI and using it with the plugin, see the [main repository](https://github.com/vocksel/studio-bridge).
+
 ## Install
 
 [Download from the Roblox website](https://www.roblox.com/library/626028645/Studio-Bridge).
