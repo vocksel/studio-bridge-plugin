@@ -120,8 +120,7 @@
 							<YO>32</YO>
 						</UDim2>
 						<token name="SizeConstraint">0</token>
-						<string name="Text"><![CDATA[Next you need to install the Studio Bridge server before you can start syncing your files.
-]]></string>
+						<string name="Text">You&apos;ll also need the command-line interface in order to run the server before you can start syncing your files.</string>
 						<Color3 name="TextColor3">4294967295</Color3>
 						<bool name="TextScaled">false</bool>
 						<float name="TextSize">16</float>
@@ -355,12 +354,12 @@
 							<Ref name="SelectionImageObject">null</Ref>
 							<UDim2 name="Size">
 								<XS>0</XS>
-								<XO>81</XO>
+								<XO>117</XO>
 								<YS>0</YS>
 								<YO>16</YO>
 							</UDim2>
 							<token name="SizeConstraint">0</token>
-							<string name="Text">for more info.</string>
+							<string name="Text">for full instructions.</string>
 							<Color3 name="TextColor3">4294967295</Color3>
 							<bool name="TextScaled">false</bool>
 							<float name="TextSize">16</float>
