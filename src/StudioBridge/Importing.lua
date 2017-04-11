@@ -7,6 +7,12 @@ local http = game:GetService("HttpService")
 local URL = "localhost"
 local PORT = 8080
 
+local function isAService(name)
+  return pcall(function()
+    return game:FindService(name)
+  end)
+end
+
 local function newScript(name, className, source, parent)
   local src = Instance.new(className or "Script")
   src.Name = name
@@ -49,7 +55,9 @@ local function getInstanceFromFileObject(fileObject, parent)
   local name = fileObject.name
   local existingInstance = parent:FindFirstChild(name)
 
-  if existingInstance then
+  if parent == game and isAService(name) then
+    return game:GetService(name)
+  elseif existingInstance then
     return handleExistingInstance(existingInstance, fileObject)
   else
     if fileObject.source then
