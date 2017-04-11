@@ -15,6 +15,31 @@ local importing = require(script.Parent.Importing)
 local protectedImport = importing.protectedImport
 
 --------------------------------------------------------------------------------
+-- Syncing State
+--------------------------------------------------------------------------------
+
+local syncing = false
+local syncingStopped = Instance.new("BindableEvent")
+local syncingStarted = Instance.new("BindableEvent")
+
+syncingStarted.Event:Connect(function()
+  if not syncing then
+    print("[StudioBridge] Started auto syncing file changes. Click Sync "..
+      "again to stop")
+
+    syncing = true
+  end
+end)
+
+syncingStopped.Event:Connect(function()
+  if syncing then
+    print("[StudioBridge] Auto syncing stopped")
+
+    syncing = false
+  end
+end)
+
+--------------------------------------------------------------------------------
 -- Plugin Setup
 --------------------------------------------------------------------------------
 
@@ -55,10 +80,6 @@ end
 local function setupSyncButton()
   local button = createSyncButton()
 
-  --[[ We have to keep this outside of the Click event, otherwise we won't be
-    able to debounce it and the user can run multiple auto sync loops. ]]
-  local syncing = false
-
   local function runImportLoop()
     while syncing do
       local success = protectedImport()
@@ -69,25 +90,16 @@ local function setupSyncButton()
 
       wait(REFRESH_RATE)
     end
-  end
 
-  local function autoImport()
-    if not syncing then
-      syncing = true
-      runImportLoop()
-
-      -- This gets run after the above function breaks out of its loop.
-      print("[StudioBridge] Auto syncing stopped")
-    end
+    syncingStopped:Fire()
   end
 
   button.Click:connect(function()
     if not syncing then
-      print("[StudioBridge] Started auto syncing file changes. Click "..
-        "\"Sync\" again to stop")
-      autoImport()
+      syncingStarted:Fire()
+      runImportLoop()
     else
-      syncing = false
+      syncingStopped:Fire()
     end
   end)
 end
