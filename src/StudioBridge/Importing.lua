@@ -41,7 +41,9 @@ end
 
 local function handleExistingScript(instance, properties)
   if instance.ClassName == properties.ClassName then
-    instance.Source = properties.Source
+    if instance.Source ~= properties.Source then
+      instance.Source = properties.Source
+    end
   else
     return replaceScript(instance, properties)
   end
