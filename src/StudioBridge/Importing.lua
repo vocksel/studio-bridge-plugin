@@ -30,12 +30,12 @@ local function newFolder(name, parent)
   return folder
 end
 
-local function handleExistingScript(instance, fileObject)
-  if instance.ClassName == fileObject.className then
-    instance.Source = fileObject.source
+local function handleExistingScript(instance, properties)
+  if instance.ClassName == properties.ClassName then
+    instance.Source = properties.Source
   else
-    local replacement = newScript(fileObject.name, fileObject.className,
-      fileObject.source, instance.Parent)
+    local replacement = newScript(properties.Name, properties.ClassName,
+      properties.Source, instance.Parent)
 
     instance:Destroy()
 
@@ -43,28 +43,28 @@ local function handleExistingScript(instance, fileObject)
   end
 end
 
-local function handleExistingInstance(instance, fileObject)
-  if instance:IsA("LuaSourceContainer") and fileObject.source then
-    return handleExistingScript(instance, fileObject)
+local function handleExistingInstance(instance, properties)
+  if instance:IsA("LuaSourceContainer") and properties.Source then
+    return handleExistingScript(instance, properties)
   end
 
   return instance
 end
 
-local function getInstanceFromFileObject(fileObject, parent)
-  local name = fileObject.name
+local function getInstance(properties, parent)
+  local name = properties.Name
   local existingInstance = parent:FindFirstChild(name)
 
   if parent == game and isAService(name) then
     return game:GetService(name)
   elseif existingInstance then
-    return handleExistingInstance(existingInstance, fileObject)
+    return handleExistingInstance(existingInstance, properties)
   else
-    if fileObject.source then
-      return newScript(fileObject.name, fileObject.className, fileObject.source,
+    if properties.Source then
+      return newScript(properties.Name, properties.ClassName, properties.Source,
         parent)
     else
-      return newFolder(fileObject.name, parent)
+      return newFolder(properties.Name, parent)
     end
   end
 end
@@ -72,11 +72,11 @@ end
 local function importHierarchy(hierarchy, parent)
   local parent = parent or game
 
-  for _, fileObject in ipairs(hierarchy) do
-    local instance = getInstanceFromFileObject(fileObject, parent)
+  for _, properties in ipairs(hierarchy) do
+    local instance = getInstance(properties, parent)
 
-    if fileObject.children then
-      importHierarchy(fileObject.children, instance)
+    if properties.Children then
+      importHierarchy(properties.Children, instance)
     end
   end
 end
