@@ -30,16 +30,20 @@ local function newFolder(name, parent)
   return folder
 end
 
+local function replaceScript(oldScript, properties)
+  local replacement = newScript(properties.Name, properties.ClassName,
+    properties.Source, oldScript.Parent)
+
+  oldScript:Destroy()
+
+  return replacement
+end
+
 local function handleExistingScript(instance, properties)
   if instance.ClassName == properties.ClassName then
     instance.Source = properties.Source
   else
-    local replacement = newScript(properties.Name, properties.ClassName,
-      properties.Source, instance.Parent)
-
-    instance:Destroy()
-
-    return replacement
+    return replaceScript(instance, properties)
   end
 end
 
@@ -51,6 +55,15 @@ local function handleExistingInstance(instance, properties)
   return instance
 end
 
+local function createInstance(properties, parent)
+  if properties.Source then
+    return newScript(properties.Name, properties.ClassName, properties.Source,
+      parent)
+  else
+    return newFolder(properties.Name, parent)
+  end
+end
+
 local function getInstance(properties, parent)
   local name = properties.Name
   local existingInstance = parent:FindFirstChild(name)
@@ -60,12 +73,7 @@ local function getInstance(properties, parent)
   elseif existingInstance then
     return handleExistingInstance(existingInstance, properties)
   else
-    if properties.Source then
-      return newScript(properties.Name, properties.ClassName, properties.Source,
-        parent)
-    else
-      return newFolder(properties.Name, parent)
-    end
+    return createInstance(properties, parent)
   end
 end
 
