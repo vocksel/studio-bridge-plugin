@@ -13,6 +13,20 @@ local function isAService(name)
   end)
 end
 
+local function newInstance(className, parent, properties)
+  local instance = Instance.new(className)
+
+  for key, value in pairs(properties) do
+    if key ~= "ClassName" then
+      instance[key] = value
+    end
+  end
+
+  instance.Parent = parent
+
+  return instance
+end
+
 local function newScript(name, className, source, parent)
   local src = Instance.new(className or "Script")
   src.Name = name
@@ -58,11 +72,13 @@ local function handleExistingInstance(instance, properties)
 end
 
 local function createInstance(properties, parent)
-  if properties.Source then
+  if properties.ClassName == "Folder" then
+    return newFolder(properties.Name, parent)
+  elseif properties.Source then
     return newScript(properties.Name, properties.ClassName, properties.Source,
       parent)
   else
-    return newFolder(properties.Name, parent)
+    return newInstance(properties.ClassName, parent, properties)
   end
 end
 
